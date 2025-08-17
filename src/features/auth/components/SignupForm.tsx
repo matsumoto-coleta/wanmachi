@@ -1,8 +1,8 @@
 "use client";
 
-import { createClient } from "@/lib/supabase/client";
 import Link from "next/link";
-import { useState, useId } from "react";
+import { useId, useState } from "react";
+import { createClient } from "@/lib/supabase/client";
 
 export default function SignupForm() {
   const [email, setEmail] = useState("");
