@@ -1,4 +1,4 @@
-import UserProfile from "@/components/auth/UserProfile";
+import UserProfile from "@/features/auth/components/UserProfile";
 
 export default function Home() {
   return (

@@ -39,6 +39,7 @@
 - スタイリングにTailwind CSS 4.x
 - リント/フォーマットにBiome（カスタムルール設定済み）
 - next/fontとGeistフォントファミリーを使用したフォント最適化
+- 認証にSupabase Auth（@supabase/supabase-js、@supabase/ssr）
 
 **コード品質設定**
 - Biomeは`biome.json`でカスタムルールを設定
@@ -48,8 +49,50 @@
 - コンソールログはerror/warn/info/tableに制限
 - 各種TypeScriptとReact固有のルールを設定
 
+## ディレクトリ構造
+
+**フィーチャーベースアーキテクチャ**
+```
+src/
+├── app/                 # Next.js App Router ページ
+├── components/         # 汎用コンポーネント
+│   ├── ui/            # 基本UIコンポーネント（Button、Input等）
+│   └── layout/        # レイアウト関連コンポーネント
+├── features/          # 機能別コンポーネント
+│   └── auth/         # 認証機能
+│       ├── components/  # 認証専用コンポーネント
+│       ├── hooks/      # 認証専用フック（必要時）
+│       └── types/      # 認証関連型定義
+├── hooks/             # 全体で使用するカスタムフック
+├── lib/              # 外部ライブラリ設定
+└── middleware.ts     # Next.js ミドルウェア（認証制御）
+└── utils             # 全体共通のロジックのうち、React Hooksがないもの
+└── constants         # 定数定義
+```
+
+**コンポーネント分類ルール**
+- `components/`: 複数の機能・ページで再利用される汎用コンポーネント
+- `features/`: 特定の機能に特化したコンポーネント（ページ固有でも可）
+- `hooks/`: 全体で使用される可能性があるフック
+- `features/*/hooks/`: その機能専用のフック
+
+## 認証システム
+
+**Supabase Auth統合**
+- Email/パスワード認証を実装済み
+- Server Components（@supabase/ssr）とClient Components対応
+- ミドルウェアによる自動認証チェック・リダイレクト
+- 環境変数：`.env.local`にSupabase URLとAnon Keyを設定
+
+**認証フロー**
+- 新規登録：`/signup` → メール確認 → 自動ログイン
+- ログイン：`/login` → ホームページリダイレクト
+- 未認証時：保護されたページから`/login`へリダイレクト
+- ログアウト：ホームページのユーザープロフィールから実行
+
 ## 重要な注意事項
 
 - このプロジェクトはパッケージマネージャーとして**pnpm**を使用（npm/yarnではない）
 - BiomeがほとんどのリントタスクでESLintを置き換える
 - ファイルパスはメインアプリケーションコードに`src/app/`構造を使用
+- 認証が必要なページは自動的に保護される（middleware.ts）
