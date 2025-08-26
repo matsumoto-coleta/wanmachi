@@ -1,2 +1,13 @@
+#!/bin/sh
 pnpm check-fix
+CHECK_FIX_EXIT_CODE=$?
+
+if [ $CHECK_FIX_EXIT_CODE -eq 0 ]; then
+  git diff --exit-code
+  if [ $? -ne 0 ]; then
+    echo "コードが自動修正されました。変更を確認してから再度コミットしてください。"
+    exit 1
+  fi
+fi
+
 pnpm type-check
